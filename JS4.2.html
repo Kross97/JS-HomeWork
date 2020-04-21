@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+
+</style>
+</head>
+<body>
+<form id="form1">
+  <p>How many letters are there in the word "Hello" ?</p>
+ <input type="radio" name="quest1" value="5"/>5</input>
+ <input type="radio" name="quest1" value="2">2</input>
+ <button type="submit" />Next</button>
+</form>
+<form id="form2" style="display: none">
+  <p>How many letters are there in the word "World" ?</p>
+ <input type="radio" name="quest2" value="4">4</input>
+ <input type="radio" name="quest2" value="5">5</input>
+ <button type="submit" />Finish</button>
+</form>
+<div id="result" style="display: none">
+</div>
+<script>
+const arr = ["5", "5"];
+const arrRes = [];
+let correct = 0;
+form1.onsubmit = (e) => {
+  e.preventDefault();
+  arrRes.push(e.target.quest1.value);
+  form1.style.display = 'none';
+  form2.style.display = 'block';
+}
+
+form2.onsubmit = (e) => {
+  e.preventDefault();
+  arrRes.push(e.target.quest2.value);
+  form2.style.display = 'none';
+  result.style.display = 'block';
+  const p = document.createElement('p');
+  for (r of arrRes) {
+    if (arr.includes(r)) {
+      correct++;
+    }
+  }
+  console.log(arrRes);
+  p.innerText = 'Result: ' + correct + 'correct answer to 2 questions';
+  result.appendChild(p);
+}
+</script>
+</body>
+</html>

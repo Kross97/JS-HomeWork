@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+#container, #result {
+  width: 1200px;
+  height: 555px;
+  margin: 0 auto;
+  background-color: antiquewhite;
+  padding-top: 25px;
+  box-sizing: border-box;
+  padding-left: 25px;
+}
+
+#result {
+  width: 960px;
+  height: 130px;
+}
+
+#result span {
+  font-size: 20px;
+}
+
+#result #resultText {
+  border: 1px solid gray;
+}
+
+.item {
+  width: 215px;
+  height: 425px;
+  border: 2px solid cadetblue;
+  position: relative;
+  margin: 0 10px 0 10px;
+  padding: 10px 0 0px 15px;
+}
+
+.active {
+  background-color: #f0642d;
+}
+
+.item p {
+  margin-bottom: 10px;
+}
+
+.item button {
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+form {
+  width: 35%;
+}
+form label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+form label textarea {
+  width: 82%;
+  height: 100px;
+  resize: none;
+}
+
+form label input {
+  width: 80%;
+  height: 25px;
+}
+
+#submit {
+  width: 100%;
+  height: 35px;
+}
+
+</style>
+</head>
+<body>
+<main id="container" style="display: flex">
+<div class="item">
+<img src="b1.jpg" style="width: 95%;">
+<p>
+  Javascript оптимизация производительности. Николас Закас.
+</p>
+<button type="button">Select</button>
+</div>
+<div  class="item">
+<img src="b2.jpg" style="width: 95%;">
+<p>
+  React Js Быстрый старт. Стоян Стефанов.
+</p>
+<button type="button">Select</button>
+</div>
+<div  class="item">
+<img src="b3.jpg" style="width: 95%;">
+<p>
+  Изучаем Javascript. Этан Браун.
+</p>
+<button  type="button">Select</button>
+</div>
+<form id="form">
+<label>
+<p style="display: inline; margin: 0;">Book:</p>
+<input id="book" name="nameBook" type="text" disabled required></input>
+</label>
+<label>
+<p style="display: inline; margin: 0;">Quantity:</p>
+<input type="text" name="quantity" required></input>
+</label>
+<label>
+<p style="display: inline; margin: 0;">Name:</p>
+<input type="text" name="name" required></input>
+</label>
+<label>
+<p style="display: inline; margin: 0; width: min-content;">Delivery address:</p>
+<textarea type="text" name="address" required></textarea>
+</label>
+<label>
+<p style="display: inline; margin: 0;">Dekivery date:</p>
+<input type="date" name="date" required></input>
+</label>
+<label>
+<p style="display: inline; margin: 0;">Comment:</p>
+<textarea type="text" name="comment" required></textarea>
+</label>
+<button id="submit" type="submit">Buy</button>
+</form>
+</main>
+<div id="result" style="display: none;">
+<span style="display: block;">Result:</span>
+<div id="resultText"></div>
+</div>
+<script>
+const items = container.querySelectorAll(".item");
+items.forEach((item) => {
+  item.addEventListener('click', ({ currentTarget }) => {
+    const activeItem = container.querySelector(".active");
+    if(activeItem) {
+      activeItem.classList.remove("active");
+    }
+
+    currentTarget.classList.add("active");
+    const p = currentTarget.querySelector("p");
+    book.value = p.innerText;
+  })
+});
+
+form.onsubmit = (e) => {
+  e.preventDefault();
+  container.style.display = 'none';
+  result.style.display = 'block';
+  let text = e.target.name.value + ',' + 'спасибо за покупку!';
+  text += 'Книги "' + e.target.nameBook.value + '"' + 'в количестве ' + e.target.quantity.value;
+  text += 'Будут доставлены ' + e.target.date.value + 'по адрессу ' + e.target.address.value;
+  resultText.innerText = text;
+  e.target.nameBook.value = '';
+  e.target.name.value = '';
+  e.target.address.value = '';
+  e.target.quantity.value = '';
+  e.target.date.value = '';
+}
+</script>
+</body>
+</html>

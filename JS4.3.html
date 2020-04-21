@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+#form, #result {
+    margin: 0 auto;
+    width: 500px;
+    height: 200px;
+    background-color: antiquewhite;
+}
+
+#text {
+  width: 99%;
+  height: 75px;
+}
+
+#submit {
+  display: block;
+  width: 100%;
+  height: 41px;
+  font-size: 20px;
+}
+</style>
+</head>
+<body>
+<form id="form" style="display: block">
+<input type="checkbox" name="bold" value="bold">Bold</input>
+<input type="checkbox" name="underline" value="underline">Underline</input>
+<input type="checkbox" name="italic" value="italic">Italic</input>
+<input type="radio" name="align" value="left">Left</input>
+<input type="radio" name="align" value="right">Right</input>
+<input type="radio" name="align" value="justify">Justify</input>
+<textarea id="text" name="text"></textarea>
+<button id="submit" type="submit" style="display: none">Show Text</button>
+</form>
+<div id="result" style="display: none">
+<p style="font-size: 20px; font-weight: bold">Result:</p>
+<div id="result2"></div>
+</div>
+<script>
+text.oninput = () => {
+  submit.style.display = "block";
+}
+
+form.onsubmit = (e) => {
+  e.preventDefault();
+  if(e.target.bold.checked){
+    result2.style["font-weight"] = e.target.bold.value;
+  }
+
+  if(e.target.italic.checked){
+    result2.style["font-style"] = e.target.italic.value;
+  }
+
+  if(e.target.underline.checked){
+    result2.style["text-decoration"] = e.target.underline.value;
+  }
+
+  if(e.target.align){
+    console.log(e.target.align);
+    result2.style["text-align"] = e.target.align.value;
+  }
+
+  result.style.display = "block";
+  form.style.display = "none";
+  result2.innerText = e.target.text.value;
+  e.target.text.value = "";
+}
+</script>
+</body>
+</html>

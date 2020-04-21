@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+#container {
+  width: 1000px;
+  height: 500px;
+  margin: 0 auto;
+  background-color: antiquewhite;
+}
+
+ #form1 {
+  width: 100%;
+  height: 65px;
+  font-size: 22px;
+  text-align: center;
+}
+
+#container form label {
+    margin-right: 40px;
+}
+
+#form2 label, #info, #savedInfo .student {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+#form2, #savedInfo {
+  font-size: 22px;
+  width: 100%;
+  height: 320px;
+  padding: 0 100px 0 100px;
+  box-sizing: border-box;
+}
+
+#form2 label:nth-child(1), #savedInfo #topicInfo {
+  margin-bottom: 25px;
+}
+
+</style>
+</head>
+<body>
+<main id="container">
+  <form id="form1">
+  <label>
+   Group:
+   <select name="group">
+   <option selected value="gr1">Group 1</option>
+   <option value="gr2">Group 2</option>
+   <option value="gr3">Group 3</option>
+   <option value="gr4">Group 4</option>
+   <option value="gr5">Group 5</option>
+   </select>
+  </label>
+  <label>
+   Lesson:
+   <select name="lesson">
+   <option selected value="ls1">Lesson 1</option>
+   <option value="ls2">Lesson 2</option>
+   <option value="ls3">Lesson 3</option>
+   <option value="ls4">Lesson 4</option>
+   <option value="ls5">Lesson 5</option>
+   </select>
+  </label>
+  <button type="submit">Select</button>
+    <hr>
+  </form>
+  <form id="form2" style="display: none">
+    <label>
+     Topic:
+     <input type="text" name="topic" style="width: 80%;" required></input>
+    </label>
+    <div id="info">
+    <span>Name</span>
+    <span>Is present</span>
+    </div>
+    <hr>
+    <label>
+     Student 1:
+     <input type="checkbox" name="student1"></input>
+    </label>
+    <hr>
+    <label>
+     Student 2:
+     <input type="checkbox" name="student2"></input>
+    </label>
+    <hr>
+    <label>
+     Student 3:
+     <input type="checkbox" name="student3"></input>
+    </label>
+    <hr>
+    <label>
+     Student 4:
+     <input type="checkbox" name="student4"></input>
+    </label>
+    <hr>
+    <label>
+     Student 5:
+     <input type="checkbox" name="student5"></input>
+    </label>
+    <hr>
+    <label>
+     Student 6:
+     <input type="checkbox" name="student6"></input>
+    </label>
+    <hr>
+    <button style="width: 100%;height: 30px;" type="submit">Save</button>
+  </form>
+  <div id="savedInfo" style="display: none">
+   <div id="topicInfo">
+   <span>Topic:</span>
+   <span id="topicName"></span>
+   </div>
+   <div id="info">
+   <span>Name</span>
+   <span>Is present</span>
+   </div>
+   <hr>
+   <div id="student1" class="student">
+     <span>Student 1</span>
+     <span id="student1Info"></span>
+   </div>
+   <hr>
+   <div id="student2" class="student">
+     <span>Student 2</span>
+     <span id="student2Info"></span>
+   </div>
+   <hr>
+   <div id="student3" class="student">
+     <span>Student 3</span>
+     <span id="student3Info"></span>
+   </div>
+   <hr>
+   <div id="student4" class="student">
+     <span>Student 4</span>
+     <span id="student4Info"></span>
+   </div>
+   <hr>
+   <div id="student5" class="student">
+     <span>Student 5</span>
+     <span id="student5Info"></span>
+   </div>
+   <hr>
+   <div id="student6" class="student">
+     <span>Student 6</span>
+     <span id="student6Info"></span>
+   </div>
+   <hr>
+  </div>
+</main>
+<script>
+const store = {};
+let group;
+let lesson;
+form1.onsubmit = (e) => {
+  e.preventDefault();
+  savedInfo.style.display = 'none';
+  form2.style.display = 'none';
+  group = e.target.group.value;
+  lesson = e.target.lesson.value;
+  if(store[group] && store[group][lesson]){
+    savedInfo.style.display = 'block';
+    topicName.innerText = store[group][lesson].topic;
+    student1Info.innerText = store[group][lesson].student1 ? 'present' : '';
+    student2Info.innerText = store[group][lesson].student2 ? 'present' : '';
+    student3Info.innerText = store[group][lesson].student3 ? 'present' : '';
+    student4Info.innerText = store[group][lesson].student4 ? 'present' : '';
+    student5Info.innerText = store[group][lesson].student5 ? 'present' : '';
+    student6Info.innerText = store[group][lesson].student6 ? 'present' : '';
+  } else if (store[group]) {
+    form2.style.display = 'block';
+    store[group][lesson] = {};
+  } else {
+    form2.style.display = 'block';
+    store[group] = {
+      [lesson]: {},
+    };
+  }
+}
+
+form2.onsubmit = (e) => {
+  e.preventDefault();
+  store[group][lesson].topic = e.target.topic.value;
+  store[group][lesson].student1 = e.target.student1.checked;
+  store[group][lesson].student2 = e.target.student2.checked;
+  store[group][lesson].student3 = e.target.student3.checked;
+  store[group][lesson].student4 = e.target.student4.checked;
+  store[group][lesson].student5 = e.target.student5.checked;
+  store[group][lesson].student6 = e.target.student6.checked;
+  console.log(store);
+  form2.style.display = 'none';
+  e.target.topic.value = '';
+  e.target.student1.checked = false;
+  e.target.student2.checked = false;
+  e.target.student3.checked = false;
+  e.target.student4.checked = false;
+  e.target.student5.checked = false;
+  e.target.student6.checked = false;
+}
+</script>
+</body>
+</html>
