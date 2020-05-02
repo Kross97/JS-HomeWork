@@ -35,6 +35,21 @@ content="text/html; charset=UTF-8">
   height: 190px;
   margin: 0 auto;
 }
+#tab {
+  border: 2px solid black;
+  width: 100%;
+  padding: 5px;
+  font-size: 20px;
+  text-align: center;
+  }
+#tab th {
+  border: 2px solid black;
+
+}
+#tab td {
+  border: 2px solid black;
+
+}
 
 .sectionContainer {
   height: 130px;
@@ -110,10 +125,21 @@ content="text/html; charset=UTF-8">
    <button type="submit">Book</button>
   </form>
   <div id="result" style="display: none">
-  <span id="direction1"></span>
-  <span id="date1"></span>
-  <span id="tikets"></span>
-  <span id="priceReserv"></span>
+    <table id="tab">
+       <caption>My tickets:</caption>
+       <tr>
+         <th>Direction</th>
+         <th>Date</th>
+         <th>Seat</th>
+         <th>Price</th>
+       </tr>
+    <tr>
+  <td id="direction1"></td>
+  <td id="date1"></td>
+  <td id="tikets"></td>
+  <td id="priceReserv"></td>
+    </tr>
+  </table>
   </div>
 </main>
 <script>
