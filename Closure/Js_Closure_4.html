@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+
+</style>
+</head>
+<body>
+  <button id='btn1'>Btn 1</button>
+  <button id='btn2'>Btn 2</button>
+  <p id='p1'></p>
+  <p id='p2'></p>
+<script>
+function Base() {
+  let countOld = 0;
+  let countNew = 1;
+  return function Closure() {
+    const z = countNew;
+    countNew = countOld + countNew;
+    countOld = z;
+    return countNew;
+  }
+}
+
+const f1 = Base();
+const f2 = Base();
+
+btn1.onclick = () => {
+  const r = f1();
+  p1.textContent = `FEB: ${r}`;
+}
+
+btn2.onclick = () => {
+  const r = f2();
+  p2.textContent = `FEB: ${r}`;
+}
+</script>
+</body>
+</html>

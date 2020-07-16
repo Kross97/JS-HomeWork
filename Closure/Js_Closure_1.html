@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+
+
+</style>
+</head>
+<body>
+<main id="container"></main>
+<main id="container2"></main>
+<button id="stopBtn">stop</button>
+<script>
+
+  function Base(s) {
+    let count = 0;
+    if (s) {
+      return function Closure() {
+        count++;
+        container2.textContent = `count: ${ count }`;
+      }
+    } else {
+      return function Closure() {
+        count++;
+        container.textContent = `count: ${ count }`;
+      }
+    }
+  }
+
+  const func = Base();
+  const func2 = Base(2);
+
+const id =  setInterval(func, 1000);
+const id2 =  setInterval(func2, 1000);
+
+stopBtn.onclick = () => {
+  clearInterval(id);
+  clearInterval(id2);
+};
+
+</script>
+</body>
+</html>

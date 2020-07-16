@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+  p {
+    color: red;
+  }
+
+  p:nth-of-type(2) {
+    color: green;
+  }
+
+  p:nth-of-type(3) {
+    color: blue;
+  }
+
+</style>
+</head>
+<body>
+<button id="generate">Generate</button>
+<p id="info"></p>
+<p id="res"></p>
+<p id="str"></p>
+<script>
+
+ function Base() {
+   const arr = [];
+   return function Closure() {
+     const n = Math.floor(Math.random() * (100 - 1) + 1);
+
+     if (arr.includes(n)) {
+       info.textContent = `Numb : ${n}`;
+       res.textContent = 'такое число уже есть!';
+       str.textContent = arr.toString();
+     } else {
+       arr.push(n);
+       info.textContent = `Numb : ${n}`;
+       res.textContent = 'число добавленно!';
+       str.textContent = arr.toString();
+     }
+   }
+ }
+
+const f = Base();
+
+generate.onclick = () => {
+  f();
+}
+
+</script>
+</body>
+</html>

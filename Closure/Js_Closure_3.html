@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<style>
+
+ p {
+   display: inline-block;
+   width: 200px;
+   height: 40px;
+   border: 2px solid black;
+   cursor: pointer;
+   margin: 5px;
+ }
+
+ p:hover {
+   border-color: red;
+ }
+
+</style>
+</head>
+<body id="body">
+<p></p>
+<script>
+
+for(let i=0; i<= 80; i++) {
+  const p = document.createElement('p');
+  body.appendChild(p);
+}
+
+const arrColors = ['#2a92ec', '#2aec3f', '#ec2a2a', '#9d2aec', '#23162d', '#ca104d', '#626161', '#e8851c', '#b90e0e'];
+function Base() {
+  let count = 0;
+  return function Closure() {
+    if(count >= 10) {
+      count = 0;
+    }
+    count ++;
+    return count;
+  }
+}
+
+const allP = document.querySelectorAll('p');
+allP.forEach((el, i) => {
+  const f = Base();
+  el.textContent = `ABZAC ${i}`;
+  el.onclick = () => {
+    const r = f() - 1;
+    el.style.backgroundColor = arrColors[r];
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=UTF-8">
+<title>Step quest</title>
+<script src="./script.js"></script>
+<style>
+
+
+</style>
+</head>
+<body>
+<p id="ww1"></p>
+<p id="ww2"></p>
+<p id="ww3"></p>
+<script>
+ const w1 = new Worker('Иван', "Иванов", 100, 15);
+ const w2 = new Worker('Петров', "Петр", 80, 22);
+ const w3 = new Worker('Олег', "Сидоров", 150, 10);
+
+ ww1.textContent = `Name: ${w1.getFullName()} Salary: ${w1.getSalary()} `;
+ ww2.textContent = `Name: ${w2.getFullName()} Salary: ${w2.getSalary()} `;
+ ww3.textContent = `Name: ${w3.getFullName()} Salary: ${w3.getSalary()} `;
+</script>
+</body>
+</html>
