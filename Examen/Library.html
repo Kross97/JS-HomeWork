@@ -6,6 +6,13 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <title>Step quest</title>
   <style>
+
+  body {
+    position: relative;
+    height: 1000px;
+    width: 100%;
+  }
+
     .hide {
       display: none;
     }
@@ -16,6 +23,65 @@
       height: 1000px;
       background-color: #aea7a7;
     }
+
+    #books {
+      height: 94.5%;
+    }
+
+    #booksNav, #visitorsNav {
+      background-color: #d4d3d3;
+    }
+
+    #booksNav input {
+      width: 50%;
+      margin-top: 10px;
+      display: block;
+    }
+
+    #modalBooks, #modalVisitors {
+      display: block;
+      position: absolute;
+      top: 0;
+      height: inherit;
+      width: inherit;
+    }
+
+    #modalBooks form, #modalVisitors form {
+      z-index: 3;
+      position: absolute;
+      width: 570px;
+      background-color: #736c64;
+      height: 370px;
+      top: 200px;
+      padding: 20px 20px 0px 25px;
+      left: 215px;
+      border: 5px solid #fff;
+      border-radius: 30px;
+    }
+
+    .form-group input {
+      margin-bottom: 8px;
+    }
+
+    #modalVisitors form input {
+      margin-bottom: 55px;
+    }
+
+    .background {
+      position: absolute;
+      z-index: 2;
+      background-color: black;
+      width: inherit;
+      height: inherit;
+      opacity: 0.7;
+      cursor: pointer;
+    }
+
+    #booksList, #visitorsList {
+      max-height: 895px;
+      overflow: auto;
+    }
+
   </style>
 </head>
 <body>
@@ -41,29 +107,61 @@
     </div>
   </nav>
   <div id="books" class="hide activeBlock">
-    <div>
-      <button type="button">Добавить книгу</button>
-      <button type="button">Показать все</button>
-      <input onchange="changeSearchText(this)" type="text" />
+    <div id="booksNav">
+      <button onclick="toggleShowForm()" class="btn btn-secondary" type="button">Добавить книгу</button>
+      <button onclick="resetSearch()" class="btn btn-secondary" type="button">Показать все</button>
+      <button onclick="setSortParam('name')" class="btn btn-secondary" type="button">Сортировать по названию</button>
+      <button onclick="setSortParam('author')" class="btn btn-secondary" type="button">Сортировать по автору</button>
+      <button onclick="setSortParam('count')" class="btn btn-secondary" type="button">Сортировать по кол-ву</button>
+      <input type="text" class="form-control" onchange="changeSearchText(this)" />
     </div>
     <div id="booksList"></div>
   </div>
-  <div id="visitors" class="hide"></div>
+  <div id="visitors" class="hide">
+   <div id="visitorsNav">
+    <button onclick="toggleShowFormVisior()" class="btn btn-secondary" type="button">Добавить посетителя</button>
+  </div>
+    <div id="visitorsList"></div>
+  </div>
   <div id="cards" class="hide"></div>
   <div id="statistics" class="hide"></div>
-  <div id="modalBooks">
-    <div class="background"></div>
-    <form onsubmit="addBook">
-      <input type="text" placeholder="введите название книги" />
-      <input type="text" placeholder="введите имя автора" />
-      <input type="text" placeholder="введите год выпуска" />
-      <input type="text" placeholder="введите название издательства" />
-      <input type="text" placeholder="введите кол-во страниц" />
-      <input type="text" placeholder="введите кол-во  таких книг в магазине" />
-      <button type="submit">Добавить</button>
+  <div id="modalBooks" style="display: none">
+    <div onclick="toggleShowForm()" class="background"></div>
+    <form id="formAddBook">
+     <div class="form-group">
+       <input name="name" type="text" class="form-control" placeholder="введите название книги" />
+       <input name="nameAuthor" type="text" class="form-control" placeholder="введите имя автора" />
+       <input name="yearCreate" type="text" class="form-control" placeholder="введите год издания" />
+       <input name="nameCreator" type="text" class="form-control" placeholder="введите название издательства" />
+       <input name="countPages" type="text" class="form-control" placeholder="введите кол-во страниц" />
+       <input name="countBooks" type="text" class="form-control" placeholder="введите кол-во  таких книг в магазине" />
+       <span id="errorInfo" style="display: none; color: red"></span>
+    </div>
+      <button id="btnAddBook" class="btn btn-secondary" type="submit"></button>
+    </form>
+  </div>
+
+  <div id="modalVisitors" style="display: none">
+    <div onclick="toggleShowFormVisior()" class="background"></div>
+    <form id="formAddVisitor">
+     <div class="form-group">
+       <input name="name" type="text" class="form-control" placeholder="введите имя" />
+       <input name="surname" type="text" class="form-control" placeholder="введите фамилию" />
+       <input name="phone" type="text" class="form-control" placeholder="введите телефон" />
+       <span id="errorInfoVisitor" style="display: none; color: red"></span>
+    </div>
+      <button id="btnAddVisitor" class="btn btn-secondary" type="submit"></button>
     </form>
   </div>
 <script>
+
+formAddBook.addEventListener('submit', (e) => {
+  addBook(e);
+});
+
+formAddVisitor.addEventListener('submit', (e) => {
+  addVisitor(e);
+});
 
 function closeActive() {
   const divActive = document.querySelector('.activeBlock');
@@ -91,16 +189,108 @@ allAnhors.forEach((el) => {
 });
 
 function changeSearchText(e) {
-  console.log('START', e.value);
-  AllState.books.searchName = e.value;
-  createTableBooks();
+  if (AllState.books.searchName !== e.value) {
+    AllState.books.searchName = e.value;
+    createTableBooks();
+  }
 }
 
+function resetSearch() {
+  if (AllState.books.searchName !== '') {
+    const input = booksNav.querySelector('input');
+    input.value = '';
+    AllState.books.searchName = '';
+    createTableBooks();
+  }
+}
+
+function toggleShowFormVisior() {
+  if(AllState.visitors.editVisitorId !== 0) {
+    btnAddVisitor.textContent = 'Изменить';
+    const idEditVisitor = AllState.visitors.editVisitorId;
+    const visitorOnEdit = AllState.visitors.allVisitors.find((visitor) => visitor.id === idEditVisitor);
+    const [name, surname] = visitorOnEdit.fullName.split(' ');
+    formAddVisitor.name.value = name;
+    formAddVisitor.surname.value = surname;
+    formAddVisitor.phone.value = visitorOnEdit.phone;
+
+  } else {
+    btnAddVisitor.textContent = 'Добавить';
+    formAddVisitor.name.value = '';
+    formAddVisitor.surname.value = '';
+    formAddVisitor.phone.value = '';
+  }
+
+  const displayForm = modalVisitors.style.display;
+  if (displayForm === 'none') {
+    modalVisitors.style.display = 'block';
+  } else {
+    AllState.visitors.editVisitorId = 0;
+    modalVisitors.style.display = 'none';
+  }
+}
+
+function toggleShowForm() {
+  if(AllState.books.editBookId !== 0) {
+    btnAddBook.textContent = 'Изменить';
+    const idEditBook = AllState.books.editBookId;
+    const bookOnEdit = AllState.books.allBooks.find((book) => book.id === idEditBook);
+    formAddBook.name.value = bookOnEdit.name;
+    formAddBook.nameAuthor.value = bookOnEdit.nameAuthor;
+    formAddBook.yearCreate.value = bookOnEdit.yearCreate;
+    formAddBook.nameCreator.value = bookOnEdit.nameCreator;
+    formAddBook.countPages.value = bookOnEdit.countPages;
+    formAddBook.countBooks.value = bookOnEdit.countBooks;
+  } else {
+    btnAddBook.textContent = 'Добавить';
+    formAddBook.name.value = '';
+    formAddBook.nameAuthor.value = '';
+    formAddBook.yearCreate.value = '';
+    formAddBook.nameCreator.value = '';
+    formAddBook.countPages.value = '';
+    formAddBook.countBooks.value = '';
+  }
+
+  const displayForm = modalBooks.style.display;
+  if (displayForm === 'none') {
+    modalBooks.style.display = 'block';
+  } else {
+    AllState.books.editBookId = 0;
+    modalBooks.style.display = 'none';
+  }
+}
+
+
+function setSortParam(sort) {
+  switch (sort) {
+    case 'name':
+      AllState.books.sortName = true;
+      AllState.books.sortAuthorName = false;
+      AllState.books.sortCountBooks = false;
+      createTableBooks();
+      break;
+    case 'author':
+      AllState.books.sortName = false;
+      AllState.books.sortAuthorName = true;
+      AllState.books.sortCountBooks = false;
+      createTableBooks();
+      break;
+    default:
+    AllState.books.sortName = false;
+    AllState.books.sortAuthorName = false;
+    AllState.books.sortCountBooks = true;
+    createTableBooks();
+  }
+}
 </script>
 
 <script src="./scripts/books/booksClass.js" ></script>
+<script src="./scripts/visitors/visitorClass.js"></script>
 <script src="./scripts/store/store.js"></script>
+<script src="./scripts/visitors/visitors.js"></script>
 <script src="./scripts/books/books.js"></script>
+<script src="./scripts/books/addBook.js"></script>
+<script src="./scripts/visitors/addVisitor.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
