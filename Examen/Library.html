@@ -33,7 +33,7 @@
       background-color: #d4d3d3;
     }
 
-    #booksNav input {
+    #booksNav input, #visitorsNav input {
       width: 50%;
       margin-top: 10px;
       display: block;
@@ -123,9 +123,9 @@
     <div id="booksNav">
       <button onclick="toggleShowForm()" class="btn btn-secondary" type="button">Добавить книгу</button>
       <button onclick="resetSearch()" class="btn btn-secondary" type="button">Показать все</button>
-      <button onclick="setSortParam('name')" class="btn btn-secondary" type="button">Сортировать по названию</button>
-      <button onclick="setSortParam('author')" class="btn btn-secondary" type="button">Сортировать по автору</button>
-      <button onclick="setSortParam('count')" class="btn btn-secondary" type="button">Сортировать по кол-ву</button>
+      <button onclick="setSortParamBooks('name')" class="btn btn-secondary" type="button">Сортировать по названию</button>
+      <button onclick="setSortParamBooks('author')" class="btn btn-secondary" type="button">Сортировать по автору</button>
+      <button onclick="setSortParamBooks('count')" class="btn btn-secondary" type="button">Сортировать по кол-ву</button>
       <input type="text" class="form-control" onchange="changeSearchText(this)" />
       <button class="btn btn-secondary" type="button">Искать</button>
     </div>
@@ -134,6 +134,11 @@
   <div id="visitors" class="hide">
    <div id="visitorsNav">
     <button onclick="toggleShowFormVisior()" class="btn btn-secondary" type="button">Добавить посетителя</button>
+    <button onclick="resetSearchVisitor()" class="btn btn-secondary" type="button">Показать всеx</button>
+    <button onclick="setSortParamVisitor('id')" class="btn btn-secondary" type="button">Сортировать по id</button>
+    <button onclick="setSortParamVisitor('name')" class="btn btn-secondary" type="button">Сортировать по имени</button>
+    <input type="text" class="form-control" onchange="changeSearchTextVisitor(this)" />
+    <button class="btn btn-secondary" type="button">Искать</button>
   </div>
     <div id="visitorsList"></div>
   </div>
@@ -192,7 +197,6 @@
 
 // РАБОТА С LOCALSTRORAGE и ИНИЦИАЛИЗАЦИЯ ПЕРВОГО ЗАПУСКА
 document.addEventListener("DOMContentLoaded", () => {
-  // localStorage.removeItem('stateApp');
   const stateApp = JSON.parse(localStorage.getItem('stateApp'));
   console.log('STATE-LOCALSTRORAGE', stateApp);
    if (stateApp) {
@@ -208,9 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
     AllState.books.allBooks.push(bookInitial);
     AllState.visitors.allVisitors.push(visitorInitial);
   }
-  console.log('BOOK-ID', Book.countMaxId);
-  console.log('VISITOR-ID', Visitor.visitorMaxId);
-  console.log('CARD-ID', Card.cardMaxId);
+
   createListsStatistics();
   createTableCards();
   createTableBooks();
@@ -275,6 +277,13 @@ function changeSearchText(e) {
   }
 }
 
+function changeSearchTextVisitor(e) {
+  if (AllState.visitors.searchParam !== e.value) {
+    AllState.visitors.searchParam = e.value;
+    createTableVisitors();
+  }
+}
+
 function resetSearch() {
   if (AllState.books.searchName !== '') {
     const input = booksNav.querySelector('input');
@@ -284,25 +293,80 @@ function resetSearch() {
   }
 }
 
-function setSortParam(sort) {
+function resetSearchVisitor() {
+  if (AllState.visitors.searchParam !== '') {
+    const input = visitorsNav.querySelector('input');
+    input.value = '';
+    AllState.visitors.searchParam = '';
+    createTableVisitors();
+  }
+}
+
+function setSortParamBooks(sort) {
+  const sortsDefault = {
+    sortName: '',
+    sortAuthorName: '',
+    sortCountBooks: '',
+  };
   switch (sort) {
     case 'name':
-      AllState.books.sortName = true;
-      AllState.books.sortAuthorName = false;
-      AllState.books.sortCountBooks = false;
+      const currentName = AllState.books.sorts.sortName;
+      AllState.books.sorts = sortsDefault;
+      if (currentName === sort) {
+        AllState.books.sorts.sortName = `${sort}Desc`;
+      } else {
+        AllState.books.sorts.sortName = sort;
+      }
       createTableBooks();
       break;
     case 'author':
-      AllState.books.sortName = false;
-      AllState.books.sortAuthorName = true;
-      AllState.books.sortCountBooks = false;
+    const currentAuthor = AllState.books.sorts.sortAuthorName;
+    AllState.books.sorts = sortsDefault;
+    if (currentAuthor === sort) {
+      AllState.books.sorts.sortAuthorName = `${sort}Desc`;
+    } else {
+      AllState.books.sorts.sortAuthorName = sort;
+    }
       createTableBooks();
       break;
     default:
-    AllState.books.sortName = false;
-    AllState.books.sortAuthorName = false;
-    AllState.books.sortCountBooks = true;
+    const currentCount = AllState.books.sorts.sortCountBooks;
+    AllState.books.sorts = sortsDefault;
+    if (currentCount === sort) {
+      AllState.books.sorts.sortCountBooks = `${sort}Desc`;
+    } else {
+      AllState.books.sorts.sortCountBooks = sort;
+    }
     createTableBooks();
+  }
+}
+
+function setSortParamVisitor(sortVisitor) {
+  const sortsDefault = {
+    sortName: '',
+    sortAuthorName: '',
+    sortCountBooks: '',
+  };
+  switch (sortVisitor) {
+    case 'name':
+      const currentName = AllState.visitors.sorts.sortName;
+      AllState.visitors.sorts = sortsDefault;
+      if (currentName === sortVisitor) {
+        AllState.visitors.sorts.sortName = `${sortVisitor}Desc`;
+      } else {
+        AllState.visitors.sorts.sortName = sortVisitor;
+      }
+      createTableVisitors();
+      break;
+    default:
+    const currentId = AllState.visitors.sorts.sortCount;
+    AllState.visitors.sorts = sortsDefault;
+    if (currentId === sortVisitor) {
+      AllState.visitors.sorts.sortCount = `${sortVisitor}Desc`;
+    } else {
+      AllState.visitors.sorts.sortCount = sortVisitor;
+    }
+    createTableVisitors();
   }
 }
 </script>

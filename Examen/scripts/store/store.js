@@ -2,13 +2,20 @@
 const AllState = {
   books: {
     allBooks: [],
-    sortName: false,
-    sortAuthorName: false,
-    sortCountBooks: false,
+    sorts: {
+      sortName: '',
+      sortAuthorName: '',
+      sortCountBooks: '',
+    },
     searchName: '',
     editBookId: 0,
   },
   visitors: {
+    sorts: {
+      sortName: '',
+      sortCount: '',
+    },
+    searchParam: '',
     allVisitors: [],
     editVisitorId: 0,
   },

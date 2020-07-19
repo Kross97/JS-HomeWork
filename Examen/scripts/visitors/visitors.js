@@ -32,9 +32,41 @@ function createHeadTableVisitor() {
 function createBodyTableVisitor() {
   const tbody = document.createElement('tbody');
 
-  const { allVisitors } = AllState.visitors;
+  const { allVisitors, searchParam } = AllState.visitors;
+  const { sortName, sortCount } = AllState.visitors.sorts;
+  let proxyVisitors = [...allVisitors];
 
-  let proxyVisitors = allVisitors;
+  if (sortName === 'name') {
+    proxyVisitors.sort((a, b) => {
+      if (a.fullName > b.fullName) {
+        return 1;
+      } else if (a.fullName < b.fullName) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+  } else if (sortName === 'nameDesc') {
+    proxyVisitors.sort((a, b) => {
+      if (b.fullName > a.fullName) {
+        return 1;
+      } else if (b.fullName < a.fullName) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
+  if (sortCount === 'id') {
+    proxyVisitors.sort((a, b) => a.id - b.id);
+  } else if (sortCount === 'idDesc') {
+    proxyVisitors.sort((a, b) => b.id - a.id);
+  }
+
+  if (searchParam !== '') {
+    proxyVisitors = proxyVisitors.filter((vis) => vis.fullName.includes(searchParam) || vis.phone.includes(searchParam));
+  }
 
   proxyVisitors.map((visitor) => {
     const tr = createVisitorItem(visitor);

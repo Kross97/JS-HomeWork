@@ -33,11 +33,12 @@ function createHeadTable() {
 
 function createBodyTable() {
   const tbody = document.createElement('tbody');
-  const { allBooks, sortName, searchName, sortAuthorName, sortCountBooks } = AllState.books;
+  const { allBooks, searchName } = AllState.books;
+  const { sortName, sortAuthorName, sortCountBooks } = AllState.books.sorts;
 
   let proxyBooks = [...allBooks];
 
-  if (sortName) {
+  if (sortName === 'name') {
     proxyBooks.sort((a, b) => {
       if (a.name > b.name) {
         return 1;
@@ -47,9 +48,20 @@ function createBodyTable() {
         return 0;
       }
     });
+  } else if (sortName === 'nameDesc') {
+    proxyBooks.sort((a, b) => {
+      if (b.name > a.name) {
+        return 1;
+      } else if (b.name < a.name) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
   }
 
-  if (sortAuthorName) {
+
+  if (sortAuthorName === 'author') {
     proxyBooks.sort((a, b) => {
       if (a.nameAuthor > b.nameAuthor) {
         return 1;
@@ -59,10 +71,22 @@ function createBodyTable() {
         return 0;
       }
     });
+  } else if (sortAuthorName === 'authorDesc') {
+    proxyBooks.sort((a, b) => {
+      if (b.nameAuthor > a.nameAuthor) {
+        return 1;
+      } else if (b.nameAuthor < a.nameAuthor) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
   }
 
-  if (sortCountBooks) {
+  if (sortCountBooks === 'count') {
     proxyBooks.sort((a, b) => a.countBooks - b.countBooks);
+  } else if (sortCountBooks === 'countDesc') {
+    proxyBooks.sort((a, b) => b.countBooks - a.countBooks);
   }
 
 
