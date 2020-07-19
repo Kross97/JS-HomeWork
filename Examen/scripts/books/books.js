@@ -35,7 +35,7 @@ function createBodyTable() {
   const tbody = document.createElement('tbody');
   const { allBooks, sortName, searchName, sortAuthorName, sortCountBooks } = AllState.books;
 
-  let proxyBooks = allBooks;
+  let proxyBooks = [...allBooks];
 
   if (sortName) {
     proxyBooks.sort((a, b) => {
@@ -120,8 +120,12 @@ function createBookItem(book) {
 
 function removeBook(id) {
  const newListBooks = AllState.books.allBooks.filter((book) => book.id !== id);
+ const newListCards = AllState.cards.allCards.filter((card) => card.bookId === id);
+ AllState.cards.allCards = newListCards;
  AllState.books.allBooks = newListBooks;
+ createTableCards();
  createTableBooks();
+ createListsStatistics();
 }
 
 const setOnEditBook = function (id) {

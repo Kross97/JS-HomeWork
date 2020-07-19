@@ -1,9 +1,7 @@
 
-const bookInitial = new Book('Война и мир', "Л.Н.Толстой", 1870, "Царская Россия", 907, 23);
-const visitorInitial = new Visitor('Никита', 'Беженарь', '+37377871818');
 const AllState = {
   books: {
-    allBooks: [bookInitial],
+    allBooks: [],
     sortName: false,
     sortAuthorName: false,
     sortCountBooks: false,
@@ -11,7 +9,10 @@ const AllState = {
     editBookId: 0,
   },
   visitors: {
-    allVisitors: [visitorInitial],
+    allVisitors: [],
     editVisitorId: 0,
+  },
+  cards: {
+    allCards: [],
   },
 };

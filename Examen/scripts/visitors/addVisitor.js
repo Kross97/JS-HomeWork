@@ -1,7 +1,7 @@
 function addVisitor(event) {
  event.preventDefault();
  const spanError = document.querySelector('#errorInfoVisitor');
- const { valid, mes } = validate(event.target);
+ const { valid, mes } = validateFormVisitors(event.target);
  if (!valid) {
    spanError.style.display = 'block';
    spanError.textContent = mes;
@@ -28,7 +28,7 @@ function addVisitor(event) {
  toggleShowFormVisior();
 }
 
-function validate(form) {
+function validateFormVisitors(form) {
   const {
     name: { value: name },
     surname: { value: surname },
@@ -42,8 +42,9 @@ function validate(form) {
   if(surname === '' || Number(surname)) {
     return { valid: false, mes: 'фамилия некоректна!' };
   }
- 
-  if(phone === '') {
+
+  const regExpPhone = /^\d[^a-z!@#$%^&*()"№;:?]+/gi;
+  if(!regExpPhone.test(phone)) {
     return { valid: false, mes: 'телефон некоректен!' };
   }
 

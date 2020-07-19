@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-  <title>Step quest</title>
+  <link rel="shortcat icon" href="./favicon.jpg"></link>
+  <title>Step Examen</title>
   <style>
 
   body {
@@ -38,7 +39,7 @@
       display: block;
     }
 
-    #modalBooks, #modalVisitors {
+    #modalBooks, #modalVisitors, #modalCards {
       display: block;
       position: absolute;
       top: 0;
@@ -46,17 +47,21 @@
       width: inherit;
     }
 
-    #modalBooks form, #modalVisitors form {
+    #modalBooks form, #modalVisitors form, #modalCards form {
       z-index: 3;
       position: absolute;
       width: 570px;
       background-color: #736c64;
-      height: 370px;
+      height: 420px;
       top: 200px;
       padding: 20px 20px 0px 25px;
-      left: 215px;
+      left: 30%;
       border: 5px solid #fff;
       border-radius: 30px;
+    }
+
+    #modalCards form {
+      height: 195px;
     }
 
     .form-group input {
@@ -80,6 +85,14 @@
     #booksList, #visitorsList {
       max-height: 895px;
       overflow: auto;
+    }
+
+    #statistics ul {
+      width: 49%;
+      float: left;
+      height: 400px;
+      margin-top: 20px;
+      margin-left: 12px;
     }
 
   </style>
@@ -114,6 +127,7 @@
       <button onclick="setSortParam('author')" class="btn btn-secondary" type="button">Сортировать по автору</button>
       <button onclick="setSortParam('count')" class="btn btn-secondary" type="button">Сортировать по кол-ву</button>
       <input type="text" class="form-control" onchange="changeSearchText(this)" />
+      <button class="btn btn-secondary" type="button">Искать</button>
     </div>
     <div id="booksList"></div>
   </div>
@@ -123,8 +137,17 @@
   </div>
     <div id="visitorsList"></div>
   </div>
-  <div id="cards" class="hide"></div>
-  <div id="statistics" class="hide"></div>
+  <div id="cards" class="hide">
+   <div id="cardNav">
+     <button onclick="toggleShowFormCard()" class="btn btn-secondary" type="button">Выдать книгу</button>
+   </div>
+   <div id="cardsList"></div>
+  </div>
+  <div id="statistics" class="hide">
+    <h3 class="h3" style="color: #fff">Статистика</h3>
+    <ul id="listBooks"></ul>
+    <ul id="listVisitors"></ul>
+  </div>
   <div id="modalBooks" style="display: none">
     <div onclick="toggleShowForm()" class="background"></div>
     <form id="formAddBook">
@@ -153,7 +176,60 @@
       <button id="btnAddVisitor" class="btn btn-secondary" type="submit"></button>
     </form>
   </div>
+
+  <div id="modalCards" style="display: none">
+    <div onclick="toggleShowFormCard()" class="background"></div>
+    <form id="formAddCard">
+     <div class="form-group">
+       <select id="selectBooks" class="form-control" name="selectBooks"></select>
+       <select id="selectVisitors" class="form-control" name="selectVisitors"></select>
+       <span id="errorInfoCard" style="display: none; color: red"></span>
+    </div>
+      <button id="btnAddCard" class="btn btn-secondary" type="submit">Добавить</button>
+    </form>
+  </div>
 <script>
+
+// РАБОТА С LOCALSTRORAGE и ИНИЦИАЛИЗАЦИЯ ПЕРВОГО ЗАПУСКА
+document.addEventListener("DOMContentLoaded", () => {
+  // localStorage.removeItem('stateApp');
+  const stateApp = JSON.parse(localStorage.getItem('stateApp'));
+  console.log('STATE-LOCALSTRORAGE', stateApp);
+   if (stateApp) {
+    AllState.books.allBooks = stateApp.allBooks;
+    AllState.visitors.allVisitors = stateApp.allVisitors;
+    AllState.cards.allCards = stateApp.allCards;
+    Book.countMaxId = stateApp.maxIdBooks;
+    Visitor.visitorMaxId = stateApp.maxIdVisitors;
+    Card.cardMaxId = stateApp.maxIdCard;
+  } else {
+    const bookInitial = new Book('Война и мир', "Л.Н.Толстой", 1870, "Царская Россия", 907, 23);
+    const visitorInitial = new Visitor('Никита', 'Беженарь', '+37377871818');
+    AllState.books.allBooks.push(bookInitial);
+    AllState.visitors.allVisitors.push(visitorInitial);
+  }
+  console.log('BOOK-ID', Book.countMaxId);
+  console.log('VISITOR-ID', Visitor.visitorMaxId);
+  console.log('CARD-ID', Card.cardMaxId);
+  createListsStatistics();
+  createTableCards();
+  createTableBooks();
+  createTableVisitors();
+});
+
+window.addEventListener("unload", () => {
+  const stateApp = {
+    allBooks: AllState.books.allBooks,
+    allVisitors: AllState.visitors.allVisitors,
+    allCards: AllState.cards.allCards,
+    maxIdBooks: Book.countMaxId,
+    maxIdVisitors: Visitor.visitorMaxId,
+    maxIdCard: Card.cardMaxId,
+  };
+
+  const stateAppJSON = JSON.stringify(stateApp);
+  localStorage.setItem('stateApp', stateAppJSON);
+});
 
 formAddBook.addEventListener('submit', (e) => {
   addBook(e);
@@ -161,6 +237,10 @@ formAddBook.addEventListener('submit', (e) => {
 
 formAddVisitor.addEventListener('submit', (e) => {
   addVisitor(e);
+});
+
+formAddCard.addEventListener('submit', (e) => {
+  addCard(e);
 });
 
 function closeActive() {
@@ -204,63 +284,6 @@ function resetSearch() {
   }
 }
 
-function toggleShowFormVisior() {
-  if(AllState.visitors.editVisitorId !== 0) {
-    btnAddVisitor.textContent = 'Изменить';
-    const idEditVisitor = AllState.visitors.editVisitorId;
-    const visitorOnEdit = AllState.visitors.allVisitors.find((visitor) => visitor.id === idEditVisitor);
-    const [name, surname] = visitorOnEdit.fullName.split(' ');
-    formAddVisitor.name.value = name;
-    formAddVisitor.surname.value = surname;
-    formAddVisitor.phone.value = visitorOnEdit.phone;
-
-  } else {
-    btnAddVisitor.textContent = 'Добавить';
-    formAddVisitor.name.value = '';
-    formAddVisitor.surname.value = '';
-    formAddVisitor.phone.value = '';
-  }
-
-  const displayForm = modalVisitors.style.display;
-  if (displayForm === 'none') {
-    modalVisitors.style.display = 'block';
-  } else {
-    AllState.visitors.editVisitorId = 0;
-    modalVisitors.style.display = 'none';
-  }
-}
-
-function toggleShowForm() {
-  if(AllState.books.editBookId !== 0) {
-    btnAddBook.textContent = 'Изменить';
-    const idEditBook = AllState.books.editBookId;
-    const bookOnEdit = AllState.books.allBooks.find((book) => book.id === idEditBook);
-    formAddBook.name.value = bookOnEdit.name;
-    formAddBook.nameAuthor.value = bookOnEdit.nameAuthor;
-    formAddBook.yearCreate.value = bookOnEdit.yearCreate;
-    formAddBook.nameCreator.value = bookOnEdit.nameCreator;
-    formAddBook.countPages.value = bookOnEdit.countPages;
-    formAddBook.countBooks.value = bookOnEdit.countBooks;
-  } else {
-    btnAddBook.textContent = 'Добавить';
-    formAddBook.name.value = '';
-    formAddBook.nameAuthor.value = '';
-    formAddBook.yearCreate.value = '';
-    formAddBook.nameCreator.value = '';
-    formAddBook.countPages.value = '';
-    formAddBook.countBooks.value = '';
-  }
-
-  const displayForm = modalBooks.style.display;
-  if (displayForm === 'none') {
-    modalBooks.style.display = 'block';
-  } else {
-    AllState.books.editBookId = 0;
-    modalBooks.style.display = 'none';
-  }
-}
-
-
 function setSortParam(sort) {
   switch (sort) {
     case 'name':
@@ -284,12 +307,17 @@ function setSortParam(sort) {
 }
 </script>
 
+<script src="./scripts/formsAdd/formsAdd.js"></script>
+<script src="./scripts/cards/cardClass.js"></script>
 <script src="./scripts/books/booksClass.js" ></script>
 <script src="./scripts/visitors/visitorClass.js"></script>
 <script src="./scripts/store/store.js"></script>
+<script src="./scripts/statistics/lists.js"></script>
 <script src="./scripts/visitors/visitors.js"></script>
 <script src="./scripts/books/books.js"></script>
+<script src="./scripts/cards/cards.js"></script>
 <script src="./scripts/books/addBook.js"></script>
+<script src="./scripts/cards/addCard.js"></script>
 <script src="./scripts/visitors/addVisitor.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

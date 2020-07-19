@@ -53,7 +53,7 @@ function createVisitorItem(visitor) {
   tr.appendChild(th);
 
   const keysVisitor = Object.keys(visitor);
-  for(let i = 1; i < keysVisitor.length ; i++) {
+  for(let i = 1; i < keysVisitor.length - 1 ; i++) {
     const td = document.createElement('td');
     td.textContent = visitor[keysVisitor[i]];
     tr.appendChild(td);
@@ -87,8 +87,12 @@ function createVisitorItem(visitor) {
 
 function removeVisitor(id) {
   const newAllvisitors = AllState.visitors.allVisitors.filter((vis) => vis.id !== id);
+  const newListCards = AllState.cards.allCards.filter((card) => card.visitorId === id);
+  AllState.cards.allCards = newListCards;
   AllState.visitors.allVisitors = newAllvisitors;
+  createTableCards();
   createTableVisitors();
+  createListsStatistics();
 }
 
 function setEditVisitor(id) {

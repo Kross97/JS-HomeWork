@@ -4,6 +4,7 @@ class Visitor {
     this.id = Visitor.visitorMaxId;
     this.fullName = name + ' ' + surname;
     this.phone = phone;
+    this.statisticCount = 0;
     Visitor.visitorMaxId++;
   }
 }

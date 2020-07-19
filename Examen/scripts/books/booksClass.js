@@ -10,6 +10,7 @@ class Book {
     this.nameCreator = nameCreator;
     this.countPages = countPages;
     this.countBooks = countBooks;
+    this.statisticCount = 0;
     Book.countMaxId++;
   }
 
